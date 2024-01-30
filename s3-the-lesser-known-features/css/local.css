@@ -1,0 +1,87 @@
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;600&display=swap");
+body {
+  counter-reset: block-counter; }
+
+.slidedeck {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 200;
+  font-size: 28pt;
+  line-height: 2em;
+  counter-reset: question-counter;
+  /*
+        General slide color, fonts, etc.
+    */ }
+  .slidedeck.aspect-ratio-4-3 {
+    font-size: 19.6pt; }
+  .slidedeck section {
+    background-color: white;
+    color: black;
+    display: inline-flex;
+    flex-direction: column;
+    padding: 2em;
+    justify-content: center; }
+    .slidedeck section a,
+    .slidedeck section a:active,
+    .slidedeck section a:hover,
+    .slidedeck section a:visited,
+    .slidedeck section a:focus,
+    .slidedeck section link {
+      color: black;
+      text-decoration: none;
+      border-bottom: 8px solid rgba(255, 165, 0, 0.5); }
+    .slidedeck section strong {
+      color: orange;
+      font-weight: 600; }
+    .slidedeck section > h1, .slidedeck section > h2, .slidedeck section > h3 {
+      margin: 20px 30px 40px 30px;
+      padding: 4px 16px;
+      background-color: #0072bc63;
+      color: black;
+      position: relative;
+      z-index: 10;
+      font-family: Open sans, Sans serif; }
+    .slidedeck section > h1 {
+      font-size: 800%; }
+    .slidedeck section > h2 {
+      font-size: 400%; }
+    .slidedeck section > ul {
+      list-style: none;
+      border: 3px solid #bad2ed;
+      margin: 0;
+      padding: 0;
+      width: 70%;
+      background-color: #c7e8e6; }
+    .slidedeck section > ul::before {
+      /*content: counter(block-counter);*/
+      counter-increment: block-counter; }
+    .slidedeck section > ul > li::before {
+      content: counter(question-counter);
+      counter-increment: question-counter;
+      font-weight: bold;
+      margin: 0 0.25em;
+      line-height: 1;
+      width: 1.8em;
+      display: inline-block; }
+    .slidedeck section > ul > li:nth-child(odd) {
+      background-color: #e3f6f5; }
+    .slidedeck section ul li span:not(:first-child) {
+      margin-left: 2.3em; }
+    .slidedeck section > ul ul {
+      list-style-type: disclosure-closed;
+      font-size: 90%;
+      color: #404040;
+      margin-left: 4em;
+      line-height: 1.8em; }
+    .slidedeck section > ol {
+      display: flex;
+      flex-wrap: wrap;
+      width: 90%;
+      margin: 0 0 0 8%;
+      padding: 0; }
+    .slidedeck section > ol > li {
+      width: 26%;
+      min-height: 4em;
+      margin: 0.5em 2em 0.5em 0.5em;
+      padding: 0.5em 1em 0.5em 0.4em;
+      border-left: 6px solid #0072bc;
+      background-color: #f2f2f2; }

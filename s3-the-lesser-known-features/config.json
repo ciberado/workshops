@@ -1,0 +1,10 @@
+{
+    "content": "README.md",
+    "styles": ["css/local.css"],
+    "preprocessors" : [
+        "threeEmptyLinesSlicerPreprocessor", "emptyLineSeparatorPreprocessor"
+    ],
+    "processors": [
+    ],
+    "script": ""
+}

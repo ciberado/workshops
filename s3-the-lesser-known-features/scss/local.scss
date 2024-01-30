@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;600&display=swap');
+
+
+$base-background: white;
+$base-text-color: black;
+$base-font : 'Open Sans', sans-serif;
+$base-text-size: 28pt;
+$base-text-weight: 200;
+
+$strong-color : orange;
+$strong-text-weight: 600;
+
+$base-headers-background: #0072bc63;
+$base-headers-color: black;
+$base-headers-font: Open sans, Sans serif;
+
+body {
+    counter-reset: block-counter;
+}
+
+.slidedeck {
+    font-family: $base-font;
+    font-weight: $base-text-weight;
+    font-size: $base-text-size;
+    line-height: 2em;
+
+    counter-reset: question-counter;
+
+    &.aspect-ratio-4-3 {
+        font-size: $base-text-size * 0.7;
+    }
+
+    /*
+        General slide color, fonts, etc.
+    */
+    section {
+        background-color: $base-background;
+        color: $base-text-color;
+        display: inline-flex;
+        flex-direction: column;
+        padding: 2em;
+
+        a,
+        a:active,
+        a:hover,
+        a:visited,
+        a:focus,
+        link {
+            color: $base-text-color;
+            text-decoration: none;
+            border-bottom: 8px solid rgba($strong-color, 0.5);
+        }
+
+        strong {
+            color : $strong-color;
+            font-weight: $strong-text-weight;
+        }
+        
+        > h1, > h2, > h3 {
+            margin: 20px 30px 40px 30px;
+            padding: 4px 16px;
+            background-color: $base-headers-background;
+            color: $base-headers-color;
+            position: relative;
+            z-index: 10;
+            font-family: $base-headers-font;
+        }
+
+        > h1 {
+            font-size: 800%;
+        }
+
+        > h2 {
+            font-size: 400%;
+        }
+
+        > ul {
+            list-style: none;
+            border: 3px solid #bad2ed;
+            margin: 0;
+            padding : 0;
+            width : 70%;
+            background-color: #c7e8e6;
+        }
+
+        > ul::before {
+            /*content: counter(block-counter);*/
+            counter-increment: block-counter;
+        }        
+
+        > ul > li::before {
+            content: counter(question-counter);
+            counter-increment: question-counter;
+            font-weight: bold;
+            margin: 0 0.25em;
+            line-height: 1;
+            width : 1.8em;
+            display: inline-block;
+        }
+
+        > ul > li:nth-child(odd) {
+            background-color: #e3f6f5;
+        }
+
+        ul li span:not(:first-child) {
+            margin-left: 2.3em;
+        }        
+        > ul ul {
+            list-style-type: disclosure-closed;
+            font-size : 90%;
+            color: #404040;
+            margin-left: 4em;
+            line-height: 1.8em;
+        }
+
+        &{
+            > ol {
+                display: flex;
+                flex-wrap: wrap;            
+                width: 90%;
+                margin: 0 0 0 8%;
+                padding: 0;
+            }
+    
+            > ol > li {
+                width: 26%;
+                min-height: 4em;
+                margin: 0.5em 2em 0.5em 0.5em;
+                padding: 0.5em 1em 0.5em 0.4em;
+                border-left: 6px solid #0072bc;
+                background-color: #f2f2f2;
+            }
+        }
+    
+    }
+
+    pre {
+        background-color : #f0f0f0;
+    }
+
+}
