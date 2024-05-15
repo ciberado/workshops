@@ -115,7 +115,8 @@ and a pagination token.
 aws s3api list-objects-v2 \
   --bucket $BUCKET_NAME \
   --prefix covers-simple/ \
-  --max-items 3
+  --max-items 3 \
+  --output table
 ```
 
 
@@ -131,6 +132,7 @@ TOKEN=$(aws s3api list-objects-v2 \
   | jq .NextToken -r)
 echo Next token is $TOKEN.
 cat first-page.json
+cat first-page.json | jq ".Contents[].Key"
 ```
 
 
@@ -146,7 +148,8 @@ token=$(aws s3api list-objects-v2 \
   --starting-token $TOKEN \
   | tee second-page.json \
   | jq .NextToken -r)
-  cat second-page.json
+cat second-page.json
+cat second-page.json | jq ".Contents[].Key"
 ```
 
 
@@ -423,7 +426,7 @@ aws s3api select-object-content \
     --expression-type 'SQL' \
     --input-serialization '{"Parquet": { }, "CompressionType": "NONE"}' \
     --output-serialization '{"JSON": {}}' "output.json" && \
-cat output.json | jq '.amazon_index + " " + .title'
+cat output.json |  jq '.amazon_index + ", " + .title + " by " + .author'
 ```
 
 
