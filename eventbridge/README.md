@@ -84,8 +84,11 @@ Some of the problems are related to the fact that the lifecycle
 of the requests is synchronous, keeping resources locked during the whole time.
 Also, a single database engine is taking care of all the tasks related to
 representing the game state.
-Coupling happens when, for example, representing the current world for one player
-affects the performance of capturing a fakémon for another one.
+
+Coupling between code components impacts the **ability to evolve** the software,
+but code is not the single coupling factor. It also happens when, for example, 
+presenting the current world for one player **affects the performance** of capturing 
+a fakémon for another one.
 
 :::
 
@@ -179,6 +182,24 @@ to capture a fakémon succeeded, subscribed components may react to it
 
 Splitting the flow in several parallel tasks is implicit, instead of
 part of the application's code.
+
+[]()
+
+### Throughput control
+
+A **relational database is always difficult to scale**, and thus property
+is transmitted to the components coupled to it.
+
+A queue is a very good way of **controlling the amount of workload** that
+a component is able to process.
+
+::: Notes
+
+The alternative most popular solution to this pattern is **throttling** the
+requests, but of course that approach may generate frustration if the
+users are not able to complete their actions.
+
+:::
 
 [](.curtain)
 
