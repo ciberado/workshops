@@ -1,51 +1,24 @@
 .slidedeck section {
 
 
-    &:has(h1), &#closing {
+    &:has(h1) {
         h1, h2 {
             background-color: unset;
             top: 5em;
         }
     }
 
-    &.illustration {
-        font-size: 60px;
+    p {
+        width: 80%;
+        margin: 1em auto;
     }
 
-    &.condensed {
-        p, ul {
-            font-size: 32pt;
-            line-height: 55pt;    
-        }
+    pre {
+        font-size: 24pt;
+        width: 90%;
+        margin: auto;
+        border: 2px solid darkgray;
     }
 
-
-    &.impacting {
-        font-size: 56pt;
-
-        p {
-            margin-bottom: 1.25em;
-        }
-    }
-
-    em {
-        font-style: normal;
-        text-decoration: underline 8px dotted orange;
-    }
-
-
-    &#working-systems, &#individuals-and-interactions, &#client-collaboration {
-        h2 {
-            width: 70%;
-        }
-    }
-
-    &#client-collaboration, &#responding-to-change {
-        h2 {
-            width: 60%;
-        }
-    }
-
-    
 }
 

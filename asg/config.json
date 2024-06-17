@@ -1,6 +1,14 @@
 {
     "content": "README.md",
-    "styles": ["css/alyssum.css", "css/local.css"],
+    "styles": [
+        "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css", 
+        "css/alyssum.css", 
+        "css/local.css"],
+    "scripts": [
+        "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js",
+        "libs/terraform.js",
+        "libs/index.js"
+    ],
     "resolution" : "1920x1080",
     "liveReload" : true,
     "preprocessors" : [

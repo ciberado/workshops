@@ -9,12 +9,10 @@
 
 ### Agenda
 
-* ASG configuration
-* Maintenance policies
+* Capacity management
 * Lifecycle hooks
-* Warm pools
-* Instance recycling
-* Refreshing instances
+* Speeding up bootstrapping
+* Security incident processes
 
 []()
 
@@ -74,6 +72,8 @@ resource "aws_autoscaling_group" "nginx" {
   }
 }
 ```
+
+[]()
 
 ### Mixed with spot
 
@@ -237,7 +237,7 @@ aws autoscaling complete-lifecycle-action \
 
 []()
 
-## Speed up instance bootstrapping
+## Speeding up instance bootstrapping
 
 []()
 
@@ -300,3 +300,14 @@ desired state of the warmed instances.
 in the warm pool after a scale-in event.
 
 :::
+
+[]()
+
+## Security incidents
+
+[]()
+
+### Detaching instances
+
+https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-detach-attach-instances.html
+https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-enter-exit-standby.html

@@ -1,25 +1,13 @@
-.slidedeck section:has(h1) h1, .slidedeck section:has(h1) h2, .slidedeck section#closing h1, .slidedeck section#closing h2 {
+.slidedeck section:has(h1) h1, .slidedeck section:has(h1) h2 {
   background-color: unset;
   top: 5em; }
 
-.slidedeck section.illustration {
-  font-size: 60px; }
+.slidedeck section p {
+  width: 80%;
+  margin: 1em auto; }
 
-.slidedeck section.condensed p, .slidedeck section.condensed ul {
-  font-size: 32pt;
-  line-height: 55pt; }
-
-.slidedeck section.impacting {
-  font-size: 56pt; }
-  .slidedeck section.impacting p {
-    margin-bottom: 1.25em; }
-
-.slidedeck section em {
-  font-style: normal;
-  text-decoration: underline 8px dotted orange; }
-
-.slidedeck section#working-systems h2, .slidedeck section#individuals-and-interactions h2, .slidedeck section#client-collaboration h2 {
-  width: 70%; }
-
-.slidedeck section#client-collaboration h2, .slidedeck section#responding-to-change h2 {
-  width: 60%; }
+.slidedeck section pre {
+  font-size: 24pt;
+  width: 90%;
+  margin: auto;
+  border: 2px solid darkgray; }
