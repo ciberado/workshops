@@ -1,11 +1,28 @@
 .slidedeck section {
 
 
-    &:has(h1) {
+    &:has(h1,h2) {
+
+        h1 {
+            font-size: 100pt;
+        }
+
         h1, h2 {
             background-color: unset;
-            top: 5em;
+            margin: 350px 0 0 50px;
+            padding: unset;
+            width: 50%;
         }
+
+        p {
+            color: white;
+            margin: 0 0 0 50px;
+        }
+    }
+
+    &:not(:has(h1,h2)) .block-image {
+        text-align: center;
+        margin: 2em;
     }
 
     p {
