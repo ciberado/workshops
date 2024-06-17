@@ -63,7 +63,7 @@ resource "aws_autoscaling_group" "nginx" {
   min_size         = 0
 
   capacity_rebalance = true
-
+  
   mixed_instances_policy {
 
     instances_distribution {

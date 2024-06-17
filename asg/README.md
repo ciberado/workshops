@@ -1,38 +1,46 @@
 [](.coverbg)
 
-![NTT presentation](images/ntt-slides-title.png)
-
 # Auto Scaling Groups
-(the less known goodies)
+
+![Photo of Buildings during Nighttime in Dubai, by Aleksandar Pasaric, https://www.pexels.com/photo/photo-of-buildings-during-nighttime-2603464/](https://images.pexels.com/photos/2603464/pexels-photo-2603464.jpeg)
+
+The lesser-known goodies.
 
 [](.agenda.powerlist)
 
 ### Agenda
 
+* Building blocks
 * Capacity management
 * Lifecycle hooks
 * Speeding up bootstrapping
 * Security incident processes
 
+[](.coverbg)
+
+## Building blocks
+
+![Raised Building Frame in Huangpu Qu, by Peng LIU, https://www.pexels.com/photo/raised-building-frame-169647/](https://images.pexels.com/photos/169647/pexels-photo-169647.jpeg)
+
 []()
 
 ### What is a Launch Template?
 
-It is a resource describing the desired state of a fresh
+It is a **versioned** resource describing the **desired state** of a fresh
 instance. It is usually used in combination of one or
 more Auto Scaling Groups.
 
 ```terraform
 resource "aws_launch_template" "nginx" {
-  name          = "nginx" 
+  name          = "nginx"
+  image_id      = data.aws_ami.ubuntu_lts.id
+  instance_type = "t3.small"
   block_device_mappings {
     ...
     ebs {
       volume_size = 8
-      volume_type = "gp3"
     }
   }
-
   user_data = base64encode(<<EOF
   #!/bin/bash
   ...
@@ -41,18 +49,43 @@ resource "aws_launch_template" "nginx" {
 }
 ```
 
-
 []()
 
+### What is an Auto Scaling Group
+
+It is a fleet of **self-healing servers** with a desired state. They
+provide horizontal scalability for virtual machines and integrate
+with services like **ELB**, **EventBridge** and **CloudWatch**.
+
+```terraform
+resource "aws_autoscaling_group" "nginx" {
+  vpc_zone_identifier = data.aws_subnets.default.ids
+ 
+  launch_template {
+    id      = aws_launch_template.nginx.id
+    version = "$Latest"
+  }
+
+  desired_capacity = 50
+  max_size         = 500
+  min_size         = 2
+  ...
+}
+```
+
+[](.coverbg)
+
 ## ASG capacity management
+
+![City Skyline during Night Time, by Ben Cheung, https://www.pexels.com/photo/city-skyline-during-night-time-7155580/](https://images.pexels.com/photos/7155580/pexels-photo-7155580.jpeg)
 
 []()
 
 ### Mixed fleets
 
 It enhances the ability of the ASG of getting the required instances,
-while providing greater spot resiliency. AWS [recommends](https://docs.aws.amazon.com/autoscaling/ec2/userguide/mixed-instances-groups-set-up-overview.html#mixed-instances-group-instance-flexibility) 
-using 10 instance types as a best practice!
+while providing greater spot resiliency. **AWS [recommends](https://docs.aws.amazon.com/autoscaling/ec2/userguide/mixed-instances-groups-set-up-overview.html#mixed-instances-group-instance-flexibility) 
+using 10 instance types** as a best practice!
 
 ```terraform
 resource "aws_autoscaling_group" "nginx" {
@@ -73,6 +106,50 @@ resource "aws_autoscaling_group" "nginx" {
 }
 ```
 
+::: Notes
+
+It is also possible to use attribute filters for selecting the
+acceptable types, but it may be less specific than a explicit override:
+
+```terraform
+  ...
+  mixed_instances_policy {
+    ...
+    launch_template {
+      override {
+        instance_requirements {
+          memory_mib {
+            min = 4000
+          }
+
+          vcpu_count {
+            min = 2
+          }
+        }
+      }
+    }
+  }
+  ...
+```
+
+:::
+
+[]()
+
+### Freakonomics
+
+As we are expanding our usage of different types of VMs, 
+[Compute Savings Plans](https://aws.amazon.com/savingsplans/faq/) become
+the best option for optimizing discounts.
+
+![money](https://cdn-icons-png.flaticon.com/512/8216/8216669.png)
+
+::: Notes
+
+[Icon created by BSD, flaticon]https://www.flaticon.es/iconos-gratis/administracion-del-dinero).
+:::
+
+
 []()
 
 ### Mixed with spot
@@ -86,10 +163,10 @@ resource "aws_autoscaling_group" "nginx" {
   ...
   mixed_instances_policy {
     instances_distribution {
-      on_demand_allocation_strategy = "prioritized"
+      on_demand_allocation_strategy = "prioritized"  // or "lowest-price"
       on_demand_base_capacity       = 2
       on_demand_percentage_above_base_capacity = 25
-      spot_allocation_strategy      = "capacity-optimized"
+      spot_allocation_strategy      = "price-capacity-optimized"
     }
     ...
   }
@@ -101,11 +178,10 @@ resource "aws_autoscaling_group" "nginx" {
 If you set mixed capacity in your ASG, your LT should
 not specify any market option in your launch template.
 
-
 *  `on_demand_allocation_strategy`: `prioritized`, `lowest-price`
 *  `on_demand_base_capacity`: Minimum number of on-demand/reserved nodes.
 *  `on_demand_percentage_above_base_capacity`: Once that minimum has been granted, percentage of on-demand for the rest of the total capacity.
-*  `spot_allocation_strategy`: `lowest-price`, 
+*  `spot_allocation_strategy`: `lowest-price`  (minimizing cost), 
  `capacity-optimized` (focus on capacity),
  `capacity-optimized-prioritized` (pools with capacity, honoring instance priority), 
  `price-capacity-optimized` (recommended, pools with capacity choosing lowest price instance types).
@@ -123,6 +199,23 @@ aws ec2 describe-instances \
 ```
 
 :::
+
+[]()
+
+### Proactive capacity rebalancing
+
+If enabled, the ASG will monitor the risk of spot instance interruption and
+replace the affected machines *before* the event occurs.
+
+It will not work if [scale-in protection](https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-instance-protection.html) is active.
+
+```terraform
+resource "aws_autoscaling_group" "nginx" {
+  ...
+  capacity_rebalance  = true
+  ...
+}
+```
 
 []()
 
@@ -148,23 +241,6 @@ nodeGroups:
 
 []()
 
-### Proactive capacity rebalancing
-
-If enabled, the ASG will monitor the risk of spot instance interruption and
-replace the affected machines *before* the event occurs.
-
-It will not work if [scale-in protection](https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-instance-protection.html) is active.
-
-```terraform
-resource "aws_autoscaling_group" "nginx" {
-  ...
-  capacity_rebalance  = true
-  ...
-}
-```
-
-[]()
-
 ### LT License management
 
 [License management](https://mng.workshop.aws/licensemanager.html) can
@@ -186,9 +262,11 @@ it can be managed for [optimizing Fortigate deployments](https://docs.fortinet.c
 
 :::
 
-[]()
+[](.coverbg)
 
 ## Lifecycle hooks
+
+![Oriental Pearl TV Tower Near City Buildings, by 征宇 郑, https://www.pexels.com/photo/oriental-pearl-tv-tower-near-city-buildings-14586518/](https://images.pexels.com/photos/14586518/pexels-photo-14586518.jpeg)
 
 []()
 
@@ -235,9 +313,13 @@ aws autoscaling complete-lifecycle-action \
   --instance-id $INSTANCE_ID
 ```
 
-[]()
+[](.coverbg)
 
 ## Speeding up instance bootstrapping
+
+![](https://images.pexels.com/photos/2973098/pexels-photo-2973098.jpeg)
+
+![]()
 
 []()
 
@@ -301,9 +383,11 @@ in the warm pool after a scale-in event.
 
 :::
 
-[]()
+[](.coverbg)
 
 ## Security incidents
+
+![International Finance Center in Hong Kong at Night, by Ben Cheung, https://www.pexels.com/photo/international-finance-center-in-hong-kong-at-night-3038814](https://images.pexels.com/photos/3038814/pexels-photo-3038814.jpeg)
 
 []()
 

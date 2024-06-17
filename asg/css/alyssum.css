@@ -82,16 +82,16 @@
     .slidedeck section link {
       color: black;
       text-decoration: none;
-      border-bottom: 8px solid rgba(5, 148, 243, 0.5);
+      border-bottom: 8px solid rgba(0, 91, 150, 0.5);
       position: relative;
       z-index: 100; }
     .slidedeck section strong {
-      color: #0594f3;
+      color: #005b96;
       font-weight: 600; }
     .slidedeck section > h1, .slidedeck section > h2, .slidedeck section > h3 {
       margin: 20px 30px 40px 30px;
       padding: 4px 16px;
-      background-color: #0071bcac;
+      background-color: #0072bc;
       color: white;
       position: relative;
       z-index: 10;

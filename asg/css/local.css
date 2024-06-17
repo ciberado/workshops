@@ -1,6 +1,19 @@
-.slidedeck section:has(h1) h1, .slidedeck section:has(h1) h2 {
+.slidedeck section:has(h1, h2) h1 {
+  font-size: 100pt; }
+
+.slidedeck section:has(h1, h2) h1, .slidedeck section:has(h1, h2) h2 {
   background-color: unset;
-  top: 5em; }
+  margin: 350px 0 0 50px;
+  padding: unset;
+  width: 50%; }
+
+.slidedeck section:has(h1, h2) p {
+  color: white;
+  margin: 0 0 0 50px; }
+
+.slidedeck section:not(:has(h1, h2)) .block-image {
+  text-align: center;
+  margin: 2em; }
 
 .slidedeck section p {
   width: 80%;
