@@ -219,6 +219,12 @@ resource "aws_autoscaling_group" "nginx" {
 
 []()
 
+### Spot advisor
+
+![Spot advisor screenshot](images/spot-advisor.png)
+
+[]()
+
 ### Kubernetes, you said?
 
 Nodegroups can take advantage of spot instance allocation. In fact,
@@ -273,7 +279,7 @@ it can be managed for [optimizing Fortigate deployments](https://docs.fortinet.c
 ### Types of hooks
 
 ASGs may trigger actions before completing each stage on their instances
-by putting a message in EventBridge, a SNS topic or a SQS queue.
+by putting a message in an **EventBridge** bus, a **SNS** topic or a **SQS** queue.
 
 `autoscaling:EC2_INSTANCE_LAUNCHING` can be used for ensuring software
 deployment before registering the new instance in a load balancer.
@@ -281,16 +287,20 @@ deployment before registering the new instance in a load balancer.
 `autoscaling:EC2_INSTANCE_TERMINATING` is useful for cleaning up, log aggregation,
 canceling an unexpected instance termination, etc.
 
+[]()
+
+### Hook example: configuration
+
 ```terraform
 resource "aws_autoscaling_lifecycle_hook" "nginx" {
   name                   = "nginx_instance_launched"
   autoscaling_group_name = aws_autoscaling_group.nginx.name
-  default_result         = "CONTINUE"
-  heartbeat_timeout      = 600
   lifecycle_transition   = "autoscaling:EC2_INSTANCE_LAUNCHING"
+  heartbeat_timeout      = 600
+  default_result         = "CONTINUE"
 
   notification_metadata = jsonencode({
-    my_action = "COMPLETE_CONFIGURATION"
+    my_action = "CONFIGURATION_COMPLETED"
   })
 
   notification_target_arn = "arn:aws:sqs:eu-west-1:444455556666:mysqs"
@@ -298,14 +308,17 @@ resource "aws_autoscaling_lifecycle_hook" "nginx" {
 }
 ```
 
-### Completing the event processing
+[]()
+
+### Hook example: signaling completion
 
 It is easy to signal the completion of a lifecycle event using the
-SDK, but it is also possible to do it with the CLI (maybe from
-the user data of the instance):
+SDK, but it is also possible to do it with the CLI (maybe **from
+the user data** of the instance):
 
 ```bash
 INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
+
 aws autoscaling complete-lifecycle-action \
   --lifecycle-hook-name nginx_instance_launched \
   --auto-scaling-group-name nginx \
@@ -319,34 +332,49 @@ aws autoscaling complete-lifecycle-action \
 
 ![](https://images.pexels.com/photos/2973098/pexels-photo-2973098.jpeg)
 
-![]()
-
 []()
 
 ### Slow boot factors
 
+#### What impacts
+
 * AMI size
 * Software installation
-* Extensive IO operations
+* Extensive configuration IO operations
 
-[]()
+#### What you try
 
-### In one word: Windows!
+* Deactivating unnecessary services.
+* Debloating the installation.
+* Pre installing the updates.
+* Adding the required software.
+* Creating a custom AMI.
 
-[]()
-
-### Optimization techniques are not enough
-
-* Install updates.
-* Debloat the installation.
-* Deactivate unnecessary services.
-* Install required software.
-* Create a custom AMI.
+::: Notes
 
 Creating a custom AMI is almost mandatory with Windows,
 but boot EBS volume content is going to be streamed in
 as-needed bases from S3, providing slow performance
 even with if following best-practices.
+
+:::
+
+[](#windows,.coverbg)
+
+### In one word: Windows!
+
+![Windows blue screen of death](images/windows.png)
+
+::: Notes
+
+Put it succinctly, **Windows AMIs are really big**. And EBS volumes
+restored from snapshots (including bootstrapping ones created from
+AMIs) **have their content copied asynchronously**, unless using
+the very limited [fast snapshot restoration option](https://docs.aws.amazon.com/ebs/latest/userguide/ebs-fast-snapshot-restore.html).
+This will impact a lot in the amount of time required for
+starting up Windows Server.
+
+:::
 
 []()
 

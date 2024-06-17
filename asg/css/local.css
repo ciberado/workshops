@@ -11,16 +11,26 @@
   color: white;
   margin: 0 0 0 50px; }
 
-.slidedeck section:not(:has(h1, h2)) .block-image {
+.slidedeck section h4 {
+  margin: 40px 80px;
+  color: #464646; }
+
+.slidedeck section:not(:has(h1, h2, h3)) .block-image {
   text-align: center;
   margin: 2em; }
 
-.slidedeck section p {
+.slidedeck section p, .slidedeck section ul {
   width: 80%;
   margin: 1em auto; }
+
+.slidedeck section ul {
+  list-style-type: disc; }
 
 .slidedeck section pre {
   font-size: 24pt;
   width: 90%;
   margin: auto;
   border: 2px solid darkgray; }
+
+#windows h3 {
+  display: none; }

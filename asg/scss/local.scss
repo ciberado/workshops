@@ -20,14 +20,23 @@
         }
     }
 
-    &:not(:has(h1,h2)) .block-image {
+    h4 {
+        margin: 40px 80px;
+        color: rgb(70,70,70);
+    }
+    
+    &:not(:has(h1,h2,h3)) .block-image {
         text-align: center;
         margin: 2em;
     }
 
-    p {
+    p, ul {
         width: 80%;
         margin: 1em auto;
+    }
+
+    ul {
+        list-style-type: disc;
     }
 
     pre {
@@ -37,5 +46,13 @@
         border: 2px solid darkgray;
     }
 
+
+
+    
 }
 
+#windows {
+    h3 {
+        display: none;
+    }
+}
