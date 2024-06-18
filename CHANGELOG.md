@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2
+
+* Added [Auto Scaling Groups, the lesser known goodies](asg).
+
 ## 1.1
 
 * Added [Asynchronous Architectures with EventBridge](eventbridge).
