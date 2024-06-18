@@ -13,8 +13,8 @@ The lesser-known goodies.
 * Building blocks
 * Capacity management
 * Lifecycle hooks
-* Speeding up bootstrapping
-* Security incident processes
+* Speeding up instance bootstrapping
+* Refreshing instances
 
 [](.coverbg)
 
@@ -132,9 +132,12 @@ acceptable types, but it may be less specific than a explicit override:
   ...
 ```
 
+Also, it is important to know how the [termination policies](https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-termination-policies.html#default-termination-policy-mixed-instances-groups) concept
+has been expanded to take into account mixed instance fleets.
+
 :::
 
-[]()
+[](.picture)
 
 ### Freakonomics
 
@@ -146,7 +149,7 @@ the best option for optimizing discounts.
 
 ::: Notes
 
-[Icon created by BSD, flaticon]https://www.flaticon.es/iconos-gratis/administracion-del-dinero).
+[Icon created by BSD, flaticon](https://www.flaticon.es/iconos-gratis/administracion-del-dinero).
 :::
 
 
@@ -217,7 +220,7 @@ resource "aws_autoscaling_group" "nginx" {
 }
 ```
 
-[]()
+[](.picture)
 
 ### Spot advisor
 
@@ -367,7 +370,7 @@ even with if following best-practices.
 
 ::: Notes
 
-Put it succinctly, **Windows AMIs are really big**. And EBS volumes
+To put it succinctly, **Windows AMIs are really big**, more than 8GB in size. And EBS volumes
 restored from snapshots (including bootstrapping ones created from
 AMIs) **have their content copied asynchronously**, unless using
 the very limited [fast snapshot restoration option](https://docs.aws.amazon.com/ebs/latest/userguide/ebs-fast-snapshot-restore.html).
@@ -380,7 +383,7 @@ starting up Windows Server.
 
 ### Warm pools
 
-A warm pool is a group of pre-initialized (stopped, usually) EC2 instances 
+A warm pool is a group of pre-initialized (**stopped**, usually) EC2 instances 
 aiding an Auto Scaling group to quickly scale out.
 
 ```terraform
@@ -401,7 +404,8 @@ resource "aws_autoscaling_group" "nginx" {
 
 The ASG will keep between `min_size` and `max_group_prepared_capacity` warmed
 instances. For example, with a `desired` of 2 and `min_size` of 4 the
-ASG will create four instances and stop/hibernate two of them.
+ASG will create four instances and stop/hibernate two of them. By the way,
+Windows hibernation is supported since 2019.
 
 `pool_state` can be `stopped`, `running` or `hibernated` indicating the
 desired state of the warmed instances.
@@ -413,13 +417,82 @@ in the warm pool after a scale-in event.
 
 [](.coverbg)
 
-## Security incidents
+## Refreshing instances
 
 ![International Finance Center in Hong Kong at Night, by Ben Cheung, https://www.pexels.com/photo/international-finance-center-in-hong-kong-at-night-3038814](https://images.pexels.com/photos/3038814/pexels-photo-3038814.jpeg)
 
 []()
 
-### Detaching instances
+### Maximum instance lifetime
 
-https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-detach-attach-instances.html
-https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-enter-exit-standby.html
+For security reasons it is common to set a limit in the amount of time
+an instance can be allowed to exist before being **replaced with a fresh one**.
+The ASG will try to replace one instance at a time, with a pause between
+each termination, but too short intervals may cause a more aggressive behavior.
+
+```terraform
+resource "aws_autoscaling_group" "nginx" {
+  vpc_zone_identifier = data.aws_subnets.default.ids
+
+  desired_capacity = 50
+
+  max_instance_lifetime = 60*60*24*7
+  ...
+```
+
+::: Notes
+
+Yes, yes: this feature has been used to replace instances running
+applications with **memory leaks** on regular intervals.
+
+:::
+
+
+[](.picture)
+
+### How rolling upgrade works
+
+![A picture of a rolling upgrade process with a checkpoint at 33% of the capacity and a surge of 2](images/rolling-upgrade.png)
+
+::: Notes
+
+A [rolling upgrade](https://docs.aws.amazon.com/whitepapers/latest/overview-deployment-options/rolling-deployments.html)
+replaces the infrastructure that runs the original version of an application with fresh infrastructure
+executing a newer version, usually proceeding in batches to allow the owners of the application to
+check if everything is happening as expected.
+
+:::
+
+[]()
+
+### Auto Scaling Group refreshing
+
+ASG have incorporated a **rolling upgrade** feature called [Instance Refresh](https://docs.aws.amazon.com/autoscaling/ec2/userguide/asg-instance-refresh.html). It provides a well-designed UX through the **web console**,
+including the definition of checkpoints. But it can also be configured and triggered using
+**Terraform** and the [CLI](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/autoscaling/start-instance-refresh.html).
+
+```terraform
+resource "aws_autoscaling_group" "nginx" {
+  ...
+  instance_refresh {
+    strategy = "Rolling"
+    preferences {
+      checkpoint_percentages = [33, 66, 100]
+      checkpoint_delay       = 60*10
+      min_healthy_percentage = 75
+      skip_matching          = true
+    }
+    triggers = ["launch_template"]
+  }
+}
+```
+
+[](#closing,.coverbg)
+
+## Clap if you enjoyed it!
+
+![Neon Lights on City Buildings, by 征宇 郑, https://www.pexels.com/photo/neon-lights-on-city-buildings-14586514/](https://images.pexels.com/photos/14586514/pexels-photo-14586514.jpeg)
+
+Javi Moreno
+
+[linkedin.com/in/javier-more](https://www.linkedin.com/in/javier-more/)

@@ -15,19 +15,24 @@
         }
 
         p {
+            font-weight: bold;
             color: white;
             margin: 0 0 0 50px;
+        }
+    }
+
+    &.picture .block-image {
+        text-align: center;
+        margin: 2em;
+
+        img {
+            max-height: 800px;
         }
     }
 
     h4 {
         margin: 40px 80px;
         color: rgb(70,70,70);
-    }
-    
-    &:not(:has(h1,h2,h3)) .block-image {
-        text-align: center;
-        margin: 2em;
     }
 
     p, ul {
@@ -44,8 +49,7 @@
         width: 90%;
         margin: auto;
         border: 2px solid darkgray;
-    }
-
+    }    
 
 
     
@@ -54,5 +58,13 @@
 #windows {
     h3 {
         display: none;
+    }
+}
+
+#closing {
+    a {
+        display: inline-block;
+        margin-top: 2em;
+        color: rgb(123, 187, 255) !important;
     }
 }

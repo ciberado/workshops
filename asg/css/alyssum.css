@@ -134,7 +134,8 @@
     flex-wrap: wrap;
     width: 100%;
     margin: 0 0 0 2.5%;
-    padding: 0; }
+    padding: 0;
+    list-style: none; }
   .slidedeck .agenda > ul > li {
     width: 30%;
     min-height: 6em;

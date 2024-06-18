@@ -8,16 +8,19 @@
   width: 50%; }
 
 .slidedeck section:has(h1, h2) p {
+  font-weight: bold;
   color: white;
   margin: 0 0 0 50px; }
+
+.slidedeck section.picture .block-image {
+  text-align: center;
+  margin: 2em; }
+  .slidedeck section.picture .block-image img {
+    max-height: 800px; }
 
 .slidedeck section h4 {
   margin: 40px 80px;
   color: #464646; }
-
-.slidedeck section:not(:has(h1, h2, h3)) .block-image {
-  text-align: center;
-  margin: 2em; }
 
 .slidedeck section p, .slidedeck section ul {
   width: 80%;
@@ -34,3 +37,8 @@
 
 #windows h3 {
   display: none; }
+
+#closing a {
+  display: inline-block;
+  margin-top: 2em;
+  color: #7bbbff !important; }
