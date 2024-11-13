@@ -95,10 +95,10 @@ EOF
 cat providers.tf
 ```
 
-Once we have our provider set up, we can initialize our Terraform project with the terraform init command. This command will download the AWS provider plugin so that Terraform can interact with AWS.
+Once we have our provider set up, we can initialize our Terraform project. The following command will download the AWS provider plugin so that Terraform can interact with AWS.
 
 ```bash
-terraform init
+terraform i«nit»
 ```
 
 ## Input variables and configuration flexibility
@@ -165,11 +165,11 @@ In our first step, we want to interact with our AWS environment to gather inform
 
 ```hcl
 cat << 'EOF' >> main.tf
-data "aws_vpc" "default" {
+«data» "aws_vpc" "default" {
   default = true
 }
 
-data "aws_subnets" "default" {
+«data» "aws_subnets" "default" {
   filter {
     name   = "vpc-id"
     values = [data.aws_vpc.default.id]
@@ -187,11 +187,11 @@ Once we have fetched the necessary data, we want to output the VPC ID and the ID
 ```hcl
 cat << 'EOF' > outputs.tf
 output "vpc_id" {
-  value = data.aws_vpc.default.id
+  value = data.aws_v«pc».default.id
 }
 
 output "subnet_id" {
-  value = data.aws_subnets.default.ids[0]
+  value = data.aws_s«ubnets».default.ids[0]
 }
 EOF
 ```
@@ -206,7 +206,7 @@ cat outputs.tf
 ```
 
 ```bash
-terraform plan \
+terraform p«lan» \
   -var-file terraform-dev.tfvars 
 ```
 
@@ -223,7 +223,7 @@ cat << 'EOF' >> main.tf
 resource "aws_security_group" "app_sg" {
   name        = "${var.prefix}_app_sg"
   description = "Application security group"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = data.aws_vpc.«default».id
 
   ingress {
     description = "HTTP from Anywhere"
@@ -315,7 +315,7 @@ The instance is configured using all the previously declared resources. See how 
 cat << 'EOF' >> main.tf
 
 resource "aws_instance" "app" {
-  ami           = data.aws_ami.ubuntu.id
+  ami           = data.aws_ami.«ubuntu».id
   instance_type = "t3.micro"
 
   subnet_id                   = data.aws_subnets.default.ids[0]
@@ -323,7 +323,7 @@ resource "aws_instance" "app" {
   associate_public_ip_address = true
 
   user_data_replace_on_change = true
-  user_data = templatefile("${path.module}/pokemon.sh.tpl", {
+  user_data = templatef«ile»("${path.module}/pokemon.sh.tpl", {
     port  = var.port
   })
 

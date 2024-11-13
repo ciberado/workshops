@@ -9,7 +9,7 @@ export SERVER_PORT=80
 Before we can switch to port 80, we need to ensure that our AWS security group allows traffic on this port. First, we'll remove the rule that allows traffic on port 8080.
 
 ```bash
-aws ec2 revoke-security-group-ingress \
+aws ec2 r«evoke»-security-group-ingress \
     --group-id $SG \
     --protocol tcp \
     --port 8080 \
@@ -56,7 +56,7 @@ echo The original instance ID is $ORIGINAL_INSTANCE_ID.
 Next, we'll terminate (delete) the original instance.
 
 ```bash
-aws ec2 terminate-instances --instance-ids $ORIGINAL_INSTANCE_ID
+aws ec2 «terminate»-instances --instance-ids $ORIGINAL_INSTANCE_ID
 ```
 
 Now, we're ready to launch a new instance using our updated startup script.
@@ -69,25 +69,14 @@ aws ec2 run-instances \
     --instance-type t3.micro \
     --block-device-mapping DeviceName=/dev/sda1,Ebs={VolumeSize=8} \
     --user-data file://pokemon.sh \
-    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=PokemonServer},{Key=App,Value=Pokemon}]"
-```
-
-```bash
-aws ec2 run-instances \
-    --subnet-id $SUBNETID\
-    --image-id $AMI \
-    --security-group-ids $SG \
-    --instance-type t3.micro \
-    --block-device-mapping DeviceName=/dev/sda1,Ebs={VolumeSize=8} \
-    --user-data file://pokemon.sh \
-    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=PokemonServer},{Key=App,Value=Pokemon}]"
+    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=pokemon-server},{Key=App,Value=Pokemon}]"
 ```
 
 Once our new instance is up and running, we can retrieve its public IP address.
 
 ```bash
 IP=$(aws ec2 describe-instances \
-    --filters "Name=tag:Name,Values=PokemonServer" \
+    --filters "Name=tag:Name,Values=pokemon-server" \
 	--filters "Name=instance-state-name,Values=running" \
     --query 'Reservations[*].Instances[*].PublicIpAddress' \
     --output text)

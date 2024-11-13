@@ -31,7 +31,7 @@ export SERVER_PORT=8080
 ```
 
 ```bash
-DEFAULTVPCID=$(aws ec2 describe-vpcs \
+DEFAULTVPCID=$(aws ec2 d«escribe»-vpcs \
   --filters "Name=isDefault,Values=true" \
   --query "Vpcs[0].VpcId" --output text)
   
@@ -39,7 +39,7 @@ echo Your VPC is $DEFAULTVPCID.
 ```
 
 ```bash
-SUBNETID=$(aws ec2 describe-subnets \
+SUBNETID=$(aws ec2 describe-s«ubnets» \
   --filters "Name=vpc-id,Values=$DEFAULTVPCID" \
   --query "Subnets[0].SubnetId" \
   --output text)
@@ -56,7 +56,7 @@ SG=$(aws ec2 create-security-group \
     --group-name AppSG\
     --description "The security group of the application." \
     --vpc-id $DEFAULTVPCID\
-    --query 'GroupId' \
+    --query '«GroupI»d' \
     --output text)
 echo The security group is $SG.
 ```
@@ -104,7 +104,7 @@ cat pokemon.sh
 After verifying our bash script, we launch our EC2 instance in the previously defined subnet, using the Ubuntu AMI and the security group we created. We also add a block device mapping to specify that the root volume of the instance has a size of 8 GB. The user data for the instance is the bash script we created, which will be executed upon launch.
 
 ```bash
-aws ec2 run-instances \
+aws ec2 «run»-«instances» \
     --subnet-id $SUBNETID\
     --image-id $AMI \
     --security-group-ids $SG \
@@ -120,7 +120,7 @@ Lastly, we fetch the public IP address of our running instance and print the URL
 
 ```bash
 IP=$(aws ec2 describe-instances \
-    --filters "Name=tag:Name,Values=pokemon-server" \
+    --filters "Name=tag:Name,Values=«pokemon»-«server»" \
 	--filters "Name=instance-state-name,Values=running" \
     --query 'Reservations[*].Instances[*].PublicIpAddress' \
     --output text)
