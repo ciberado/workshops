@@ -43,10 +43,11 @@ aws ec2 run-instances \
     --subnet-id $SUBNETID\
     --image-id $AMI \
     --security-group-ids $SG \
-    --instance-type t3.micro \
+    --instance-type t3.medium \
     --block-device-mapping DeviceName=/dev/sda1,Ebs={VolumeSize=8} \
     --user-data file://user-data.sh \
-    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=pokemon-server},{Key=App,Value=Pokemon}]"
+    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=pokemon-server},{Key=App,Value=Pokemon}]" |
+    > /dev/null
 
 IP=$(aws ec2 describe-instances \
     --filters "Name=tag:Name,Values=pokemon-server" \
@@ -55,7 +56,3 @@ IP=$(aws ec2 describe-instances \
     --output text)
 echo Your application is at http://$IP:$SERVER_PORT
 
-echo **************************************************************
-echo And your Pokémon is $(curl -s http://$IP:$SERVER_PORT/ | jq .name -r).
-echo **************************************************************
-echo
