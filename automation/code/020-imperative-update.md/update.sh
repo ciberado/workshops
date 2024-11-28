@@ -5,7 +5,7 @@ export AWS_DEFAULT_REGION=us-east-1
 export OLD_SERVER_PORT=8080
 export SERVER_PORT=80
 
-echo Removing old security group rule ($OLD_SERVER_PORT).
+echo "Removing old security group rule ($OLD_SERVER_PORT)."
 aws ec2 revoke-security-group-ingress \
     --group-id $SG \
     --protocol tcp \
@@ -13,7 +13,7 @@ aws ec2 revoke-security-group-ingress \
     --cidr 0.0.0.0/0
 
 
-echo Authorizing new security gruop rule ($SERVER_PORT)
+echo "Authorizing new security gruop rule ($SERVER_PORT)."
 aws ec2 authorize-security-group-ingress \
     --group-id $SG \
     --protocol tcp \
@@ -25,7 +25,7 @@ ORIGINAL_INSTANCE_ID=$(aws ec2 describe-instances \
   --query 'Reservations[*].Instances[*].InstanceId' \
   --output text)
 
-echo Terminating the original instance ID is $ORIGINAL_INSTANCE_ID.
+echo "Terminating the original instance ID is $ORIGINAL_INSTANCE_ID."
 aws ec2 terminate-instances --instance-ids $ORIGINAL_INSTANCE_ID
 
 
@@ -45,4 +45,4 @@ IP=$(aws ec2 describe-instances \
 	--filters "Name=instance-state-name,Values=running" \
     --query 'Reservations[*].Instances[*].PublicIpAddress' \
     --output text)
-echo Your application is at http://$IP:$SERVER_PORT
+echo "Your application is at http://$IP:$SERVER_PORT"
