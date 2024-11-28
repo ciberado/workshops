@@ -19,7 +19,7 @@ SUBNETID=$(aws ec2 describe-subnets \
 echo Your subnet is $SUBNETID.
 
 SG=$(aws ec2 describe-security-groups \
-  --group-names AppSG \
+  --group-names PokemonSG \
   --filters Name=vpc-id,Values=$DEFAULTVPCID \
   --query 'SecurityGroups[*].GroupId' \
   --output text)
@@ -62,7 +62,7 @@ aws ec2 run-instances \
     --subnet-id $SUBNETID\
     --image-id $AMI \
     --security-group-ids $SG \
-    --instance-type t3.medium \
+    --instance-type t2.medium \
     --block-device-mapping DeviceName=/dev/sda1,Ebs={VolumeSize=8} \
     --user-data file://user-data.sh \
     --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=pokemon-server},{Key=App,Value=Pokemon}]" |
