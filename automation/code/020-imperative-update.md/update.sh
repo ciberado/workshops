@@ -5,6 +5,27 @@ export AWS_DEFAULT_REGION=us-east-1
 export OLD_SERVER_PORT=8080
 export SERVER_PORT=80
 
+DEFAULTVPCID=$(aws ec2 describe-vpcs \
+  --filters "Name=isDefault,Values=true" \
+  --query "Vpcs[0].VpcId" --output text)
+  
+echo Your VPC is $DEFAULTVPCID.
+
+SUBNETID=$(aws ec2 describe-subnets \
+  --filters "Name=vpc-id,Values=$DEFAULTVPCID" \
+  --query "Subnets[0].SubnetId" \
+  --output text)
+  
+echo Your subnet is $SUBNETID.
+
+SG=$(aws ec2 describe-security-groups \
+  --group-names AppSG \
+  --filters Name=vpc-id,Values=$DEFAULTVPCID \
+  --query 'SecurityGroups[*].GroupId' \
+  --output text)
+echo "Your security group is $SG."
+
+
 echo "Removing old security group rule ($OLD_SERVER_PORT)."
 aws ec2 revoke-security-group-ingress \
     --group-id $SG \
@@ -21,13 +42,20 @@ aws ec2 authorize-security-group-ingress \
     --cidr 0.0.0.0/0
 
 ORIGINAL_INSTANCE_ID=$(aws ec2 describe-instances \
-  --filters "Name=tag:Name,Values=PokemonServer" \
+  --filters "Name=tag:Name,Values=pokemon-server" \
   --query 'Reservations[*].Instances[*].InstanceId' \
   --output text)
 
 echo "Terminating the original instance ID is $ORIGINAL_INSTANCE_ID."
 aws ec2 terminate-instances --instance-ids $ORIGINAL_INSTANCE_ID
 
+
+AMI=$(aws ec2 describe-images \
+    --owners 099720109477 \
+    --filters 'Name=name,Values=ubuntu/images/hvm-ssd/ubuntu-*-22.04-amd64-server-*' 'Name=state,Values=available' \
+    --query 'sort_by(Images, &CreationDate)[-1].[ImageId]' \
+    --output text)
+echo The AMI is going to be $AMI.
 
 echo Starting a new instance.
 aws ec2 run-instances \
@@ -42,7 +70,7 @@ aws ec2 run-instances \
 
 IP=$(aws ec2 describe-instances \
     --filters "Name=tag:Name,Values=pokemon-server" \
-	--filters "Name=instance-state-name,Values=running" \
+    --filters "Name=instance-state-name,Values=running" \
     --query 'Reservations[*].Instances[*].PublicIpAddress' \
     --output text)
 echo "Your application is at http://$IP:$SERVER_PORT"
