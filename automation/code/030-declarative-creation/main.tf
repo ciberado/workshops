@@ -51,7 +51,7 @@ data "aws_ami" "ubuntu" {
 
 resource "aws_instance" "app" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.micro"
+  instance_type = "t2.medium"
 
   subnet_id                   = data.aws_subnets.default.ids[0]
   vpc_security_group_ids      = [aws_security_group.app_sg.id]
